@@ -1,6 +1,7 @@
 package astiav
 
 //#include <libavcodec/avcodec.h>
+//#include <libavcodec/packet.h>
 import "C"
 import (
 	"errors"
