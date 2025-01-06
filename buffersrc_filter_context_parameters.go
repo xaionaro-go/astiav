@@ -41,26 +41,6 @@ func (bfcp *BuffersrcFilterContextParameters) SetChannelLayout(l ChannelLayout) 
 	l.copy(&bfcp.c.ch_layout) //nolint: errcheck
 }
 
-// https://ffmpeg.org/doxygen/7.0/structAVBufferSrcParameters.html#a442add2b039f416dd7c92ccf1ccd0d3b
-func (bfcp *BuffersrcFilterContextParameters) ColorRange() ColorRange {
-	return ColorRange(bfcp.c.color_range)
-}
-
-// https://ffmpeg.org/doxygen/7.0/structAVBufferSrcParameters.html#a442add2b039f416dd7c92ccf1ccd0d3b
-func (bfcp *BuffersrcFilterContextParameters) SetColorRange(r ColorRange) {
-	bfcp.c.color_range = C.enum_AVColorRange(r)
-}
-
-// https://ffmpeg.org/doxygen/7.0/structAVBufferSrcParameters.html#a700226626af70f787c930d7506554757
-func (bfcp *BuffersrcFilterContextParameters) ColorSpace() ColorSpace {
-	return ColorSpace(bfcp.c.color_space)
-}
-
-// https://ffmpeg.org/doxygen/7.0/structAVBufferSrcParameters.html#a700226626af70f787c930d7506554757
-func (bfcp *BuffersrcFilterContextParameters) SetColorSpace(s ColorSpace) {
-	bfcp.c.color_space = C.enum_AVColorSpace(s)
-}
-
 // https://ffmpeg.org/doxygen/7.0/structAVBufferSrcParameters.html#a032a202496206e18449c66233058647a
 func (bfcp *BuffersrcFilterContextParameters) Framerate() Rational {
 	return newRationalFromC(bfcp.c.frame_rate)
