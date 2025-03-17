@@ -63,6 +63,17 @@ func (cp *CodecParameters) SetCodecTag(t CodecTag) {
 	cp.c.codec_tag = C.uint(t)
 }
 
+func (cp *CodecParameters) FrameRate() Rational {
+	return newRationalFromC(cp.c.framerate)
+}
+
+func (cp *CodecParameters) SetFrameRate(r Rational) {
+	cp.c.framerate = C.AVRational{
+		num: C.int(r.Num()),
+		den: C.int(r.Den()),
+	}
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVCodecParameters.html#ae4c7ac718a75adb31b5f2076a02fdedf
 func (cp *CodecParameters) ChromaLocation() ChromaLocation {
 	return ChromaLocation(cp.c.chroma_location)
