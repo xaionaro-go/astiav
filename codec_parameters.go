@@ -32,6 +32,11 @@ func (cp *CodecParameters) BitRate() int64 {
 	return int64(cp.c.bit_rate)
 }
 
+// https://ffmpeg.org/doxygen/8.0/structAVCodecParameters.html#a5268fcf4ae8ed27edef54f836b926d93
+func (cp *CodecParameters) SetBitRate(bitRate int64) {
+	cp.c.bit_rate = C.int64_t(bitRate)
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVCodecParameters.html#a4d581c205b18108a4f00e8fb3a2b26f9
 func (cp *CodecParameters) ChannelLayout() ChannelLayout {
 	l, _ := newChannelLayoutFromC(&cp.c.ch_layout).clone()
