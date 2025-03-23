@@ -192,3 +192,12 @@ func (p *Packet) FromData(data []byte) (err error) {
 	err = newError(C.av_packet_from_data(p.c, buf, C.int(len(data))))
 	return
 }
+
+func (p *Packet) TimeBase() Rational {
+	return NewRational(int(p.c.time_base.num), int(p.c.time_base.den))
+}
+
+func (p *Packet) SetTimeBase(v Rational) {
+	p.c.time_base.num = v.c.num
+	p.c.time_base.den = v.c.den
+}
