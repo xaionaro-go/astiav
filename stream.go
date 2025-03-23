@@ -162,15 +162,3 @@ func (s *Stream) TimeBase() Rational {
 func (s *Stream) SetTimeBase(r Rational) {
 	s.c.time_base = r.c
 }
-
-type PTSWrapBits int
-
-// https://ffmpeg.org/doxygen/7.0/structAVStream.html#a6cdb0c90a69899f4e1e54704bb654936
-func (s *Stream) PTSWrapBits() PTSWrapBits {
-	return PTSWrapBits(s.c.pts_wrap_bits)
-}
-
-// https://ffmpeg.org/doxygen/7.0/structAVStream.html#a6cdb0c90a69899f4e1e54704bb654936
-func (s *Stream) SetPTSWrapBits(bits PTSWrapBits) {
-	s.c.pts_wrap_bits = C.int(bits)
-}
