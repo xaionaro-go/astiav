@@ -152,4 +152,3 @@ func (s *Stream) TimeBase() Rational {
 func (s *Stream) SetTimeBase(r Rational) {
 	s.c.time_base = r.c
 }
-
