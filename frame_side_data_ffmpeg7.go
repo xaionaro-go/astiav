@@ -1,3 +1,6 @@
+//go:build ffmpeg7
+// +build ffmpeg7
+
 package astiav
 
 //#include <libavutil/frame.h>
@@ -14,6 +17,11 @@ import (
 type FrameSideData struct {
 	sd   ***C.AVFrameSideData
 	size *C.int
+}
+
+// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#a44d40e03fe22a0511c9157dab22143ee
+func (f *Frame) SideData() *FrameSideData {
+	return newFrameSideDataFromC(&f.c.side_data, &f.c.nb_side_data)
 }
 
 func newFrameSideDataFromC(sd ***C.AVFrameSideData, size *C.int) *FrameSideData {

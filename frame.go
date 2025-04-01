@@ -239,11 +239,6 @@ func (f *Frame) SetSampleRate(r int) {
 	f.c.sample_rate = C.int(r)
 }
 
-// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#a44d40e03fe22a0511c9157dab22143ee
-func (f *Frame) SideData() *FrameSideData {
-	return newFrameSideDataFromC(&f.c.side_data, &f.c.nb_side_data)
-}
-
 // https://ffmpeg.org/doxygen/7.0/structAVFrame.html#a1e71ce60cedd5f3b6811714a9f7f9e0a
 func (f *Frame) Width() int {
 	return int(f.c.width)
@@ -303,4 +298,12 @@ func (f *Frame) MakeWritable() error {
 // https://ffmpeg.org/doxygen/7.0/group__lavu__frame.html#gaec4e92f6e1e75ffaf76e07586fb0c9ed
 func (f *Frame) Copy(dst *Frame) error {
 	return newError(C.av_frame_copy(dst.c, f.c))
+}
+
+func (f *Frame) Duration() int64 {
+	return int64(f.c.duration)
+}
+
+func (f *Frame) SetDuration(v int64) {
+	f.c.duration = C.int64_t(v)
 }

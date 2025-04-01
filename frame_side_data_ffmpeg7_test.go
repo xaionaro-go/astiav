@@ -1,3 +1,6 @@
+//go:build ffmpeg7
+// +build ffmpeg7
+
 package astiav
 
 import (
