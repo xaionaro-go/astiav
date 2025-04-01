@@ -24,18 +24,14 @@ var (
 )
 
 type stream struct {
-	buffersinkContext *astiav.BuffersinkFilterContext
-	buffersrcContext  *astiav.BuffersrcFilterContext
-	decCodec          *astiav.Codec
-	decCodecContext   *astiav.CodecContext
-	decFrame          *astiav.Frame
-	encCodec          *astiav.Codec
-	encCodecContext   *astiav.CodecContext
-	encPkt            *astiav.Packet
-	filterFrame       *astiav.Frame
-	filterGraph       *astiav.FilterGraph
-	inputStream       *astiav.Stream
-	outputStream      *astiav.Stream
+	decCodec        *astiav.Codec
+	decCodecContext *astiav.CodecContext
+	decFrame        *astiav.Frame
+	encCodec        *astiav.Codec
+	encCodecContext *astiav.CodecContext
+	encPkt          *astiav.Packet
+	inputStream     *astiav.Stream
+	outputStream    *astiav.Stream
 }
 
 func main() {
@@ -74,7 +70,7 @@ func main() {
 	}
 
 	// Init filters
-	if err := initFilters(); err != nil {
+	if err := initPackets(); err != nil {
 		log.Fatal(fmt.Errorf("main: initializing filters failed: %w", err))
 	}
 
@@ -127,7 +123,7 @@ func main() {
 					defer s.decFrame.Unref()
 
 					// Filter, encode and write frame
-					if err := filterEncodeWriteFrame(s.decFrame, s); err != nil {
+					if err := encodeWriteFrame(s.decFrame, s); err != nil {
 						log.Fatal(fmt.Errorf("main: filtering, encoding and writing frame failed: %w", err))
 					}
 					return false
@@ -143,11 +139,6 @@ func main() {
 
 	// Loop through streams
 	for _, s := range streams {
-		// Flush filter
-		if err := filterEncodeWriteFrame(nil, s); err != nil {
-			log.Fatal(fmt.Errorf("main: filtering, encoding and writing frame failed: %w", err))
-		}
-
 		// Flush encoder
 		if err := encodeWriteFrame(nil, s); err != nil {
 			log.Fatal(fmt.Errorf("main: encoding and writing frame failed: %w", err))
@@ -308,11 +299,6 @@ func openOutputFile() (err error) {
 			s.encCodecContext.SetWidth(s.decCodecContext.Width())
 		}
 
-		// Update flags
-		if outputFormatContext.OutputFormat().Flags().Has(astiav.IOFormatFlagGlobalheader) {
-			s.encCodecContext.SetFlags(s.encCodecContext.Flags().Add(astiav.CodecContextFlagGlobalHeader))
-		}
-
 		// Open codec context
 		if err = s.encCodecContext.Open(s.encCodec, nil); err != nil {
 			err = fmt.Errorf("main: opening codec context failed: %w", err)
@@ -351,161 +337,12 @@ func openOutputFile() (err error) {
 	return
 }
 
-func initFilters() (err error) {
+func initPackets() (err error) {
 	// Loop through output streams
 	for _, s := range streams {
-		// Allocate graph
-		if s.filterGraph = astiav.AllocFilterGraph(); s.filterGraph == nil {
-			err = errors.New("main: graph is nil")
-			return
-		}
-		c.Add(s.filterGraph.Free)
-
-		// Allocate outputs
-		outputs := astiav.AllocFilterInOut()
-		if outputs == nil {
-			err = errors.New("main: outputs is nil")
-			return
-		}
-		c.Add(outputs.Free)
-
-		// Allocate inputs
-		inputs := astiav.AllocFilterInOut()
-		if inputs == nil {
-			err = errors.New("main: inputs is nil")
-			return
-		}
-		c.Add(inputs.Free)
-
-		// Create buffersrc context parameters
-		buffersrcContextParameters := astiav.AllocBuffersrcFilterContextParameters()
-		defer buffersrcContextParameters.Free()
-
-		// Switch on media type
-		var buffersrc, buffersink *astiav.Filter
-		var content string
-		switch s.decCodecContext.MediaType() {
-		case astiav.MediaTypeAudio:
-			buffersrc = astiav.FindFilterByName("abuffer")
-			buffersrcContextParameters.SetChannelLayout(s.decCodecContext.ChannelLayout())
-			buffersrcContextParameters.SetSampleFormat(s.decCodecContext.SampleFormat())
-			buffersrcContextParameters.SetSampleRate(s.decCodecContext.SampleRate())
-			buffersrcContextParameters.SetTimeBase(s.decCodecContext.TimeBase())
-			buffersink = astiav.FindFilterByName("abuffersink")
-			content = fmt.Sprintf("aformat=sample_fmts=%s:channel_layouts=%s", s.encCodecContext.SampleFormat().Name(), s.encCodecContext.ChannelLayout().String())
-		default:
-			buffersrc = astiav.FindFilterByName("buffer")
-			buffersrcContextParameters.SetHeight(s.decCodecContext.Height())
-			buffersrcContextParameters.SetPixelFormat(s.decCodecContext.PixelFormat())
-			buffersrcContextParameters.SetSampleAspectRatio(s.decCodecContext.SampleAspectRatio())
-			buffersrcContextParameters.SetTimeBase(s.inputStream.TimeBase())
-			buffersrcContextParameters.SetWidth(s.decCodecContext.Width())
-			buffersink = astiav.FindFilterByName("buffersink")
-			content = fmt.Sprintf("format=pix_fmts=%s", s.encCodecContext.PixelFormat().Name())
-		}
-
-		// Check filters
-		if buffersrc == nil {
-			err = errors.New("main: buffersrc is nil")
-			return
-		}
-		if buffersink == nil {
-			err = errors.New("main: buffersink is nil")
-			return
-		}
-
-		// Create filter contexts
-		if s.buffersrcContext, err = s.filterGraph.NewBuffersrcFilterContext(buffersrc, "in"); err != nil {
-			err = fmt.Errorf("main: creating buffersrc context failed: %w", err)
-			return
-		}
-		if s.buffersinkContext, err = s.filterGraph.NewBuffersinkFilterContext(buffersink, "out"); err != nil {
-			err = fmt.Errorf("main: creating buffersink context failed: %w", err)
-			return
-		}
-
-		// Set buffersrc context parameters
-		if err = s.buffersrcContext.SetParameters(buffersrcContextParameters); err != nil {
-			err = fmt.Errorf("main: setting buffersrc context parameters failed: %w", err)
-			return
-		}
-
-		// Initialize buffersrc context
-		if err = s.buffersrcContext.Initialize(nil); err != nil {
-			err = fmt.Errorf("main: initializing buffersrc context failed: %w", err)
-			return
-		}
-
-		// Update outputs
-		outputs.SetName("in")
-		outputs.SetFilterContext(s.buffersrcContext.FilterContext())
-		outputs.SetPadIdx(0)
-		outputs.SetNext(nil)
-
-		// Update inputs
-		inputs.SetName("out")
-		inputs.SetFilterContext(s.buffersinkContext.FilterContext())
-		inputs.SetPadIdx(0)
-		inputs.SetNext(nil)
-
-		// Parse
-		if err = s.filterGraph.Parse(content, inputs, outputs); err != nil {
-			err = fmt.Errorf("main: parsing filter failed: %w", err)
-			return
-		}
-
-		// Configure
-		if err = s.filterGraph.Configure(); err != nil {
-			err = fmt.Errorf("main: configuring filter failed: %w", err)
-			return
-		}
-
-		// Allocate frame
-		s.filterFrame = astiav.AllocFrame()
-		c.Add(s.filterFrame.Free)
-
 		// Allocate packet
 		s.encPkt = astiav.AllocPacket()
 		c.Add(s.encPkt.Free)
-	}
-	return
-}
-
-func filterEncodeWriteFrame(f *astiav.Frame, s *stream) (err error) {
-	// Add frame
-	if err = s.buffersrcContext.AddFrame(f, astiav.NewBuffersrcFlags(astiav.BuffersrcFlagKeepRef)); err != nil {
-		err = fmt.Errorf("main: adding frame failed: %w", err)
-		return
-	}
-
-	// Loop
-	for {
-		// We use a closure to unreference the frame
-		if stop, err := func() (bool, error) {
-			// Get frame
-			if err := s.buffersinkContext.GetFrame(s.filterFrame, astiav.NewBuffersinkFlags()); err != nil {
-				if errors.Is(err, astiav.ErrEof) || errors.Is(err, astiav.ErrEagain) {
-					return true, nil
-				}
-				return false, fmt.Errorf("main: getting frame failed: %w", err)
-			}
-
-			// Make sure to unreference the frame
-			defer s.filterFrame.Unref()
-
-			// Reset picture type
-			s.filterFrame.SetPictureType(astiav.PictureTypeNone)
-
-			// Encode and write frame
-			if err := encodeWriteFrame(s.filterFrame, s); err != nil {
-				return false, fmt.Errorf("main: encoding and writing frame failed: %w", err)
-			}
-			return false, nil
-		}(); err != nil {
-			return err
-		} else if stop {
-			break
-		}
 	}
 	return
 }

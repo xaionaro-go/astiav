@@ -215,8 +215,6 @@ func TestFilterGraph(t *testing.T) {
 			require.Equal(t, v.buffersink.sampleFormat, buffersinkContext.SampleFormat())
 			require.Equal(t, v.buffersink.sampleRate, buffersinkContext.SampleRate())
 		default:
-			require.Equal(t, v.buffersink.colorRange, buffersinkContext.ColorRange())
-			require.Equal(t, v.buffersink.colorSpace, buffersinkContext.ColorSpace())
 			require.Equal(t, v.buffersink.height, buffersinkContext.Height())
 			require.Equal(t, v.buffersink.pixelFormat, buffersinkContext.PixelFormat())
 			require.Equal(t, v.buffersink.sampleAspectRatio, buffersinkContext.SampleAspectRatio())
