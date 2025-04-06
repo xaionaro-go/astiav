@@ -33,6 +33,13 @@ func (d *Dictionary) Set(key, value string, flags DictionaryFlags) error {
 	return newError(C.av_dict_set(&d.c, ck, cv, C.int(flags)))
 }
 
+// https://ffmpeg.org/doxygen/8.0/group__lavu__dict.html#ga8d9c2de72b310cef8e6a28c9cd3acbbe
+func (d *Dictionary) Unset(key string) error {
+	ck := C.CString(key)
+	defer C.free(unsafe.Pointer(ck))
+	return newError(C.av_dict_set(&d.c, ck, nil, 0))
+}
+
 // https://ffmpeg.org/doxygen/8.0/group__lavu__dict.html#gaca5ff7c251e60bd13164d13c82f21b79
 func (d *Dictionary) ParseString(i, keyValSep, pairsSep string, flags DictionaryFlags) error {
 	ci := C.CString(i)
