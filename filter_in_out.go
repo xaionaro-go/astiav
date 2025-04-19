@@ -36,6 +36,9 @@ func (i *FilterInOut) SetName(n string) {
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVFilterInOut.html#a3227857d0b955b639f4950d13e4e6f40
+func (i *FilterInOut) FilterContext() *FilterContext {
+	return newFilterContext(i.c.filter_ctx)
+}
 func (i *FilterInOut) SetFilterContext(c *FilterContext) {
 	i.c.filter_ctx = (*C.AVFilterContext)(c.c)
 }

@@ -195,6 +195,11 @@ func (f *Frame) PktDts() int64 {
 	return int64(f.c.pkt_dts)
 }
 
+// https://ffmpeg.org/doxygen/8.0/structAVFrame.html#aa52951f35ec9e303d3dfeb4b3e44248a
+func (f *Frame) SetPktDts(dts int64) {
+	f.c.pkt_dts = C.int64_t(dts)
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a0452833e3ab6ddd7acbf82817a7818a4
 func (f *Frame) Pts() int64 {
 	return int64(f.c.pts)
