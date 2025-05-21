@@ -198,6 +198,11 @@ func (cc *CodecContext) FrameSize() int {
 	return int(cc.c.frame_size)
 }
 
+// https://ffmpeg.org/doxygen/trunk/group__lavc__misc.html#gaf60b0e076f822abcb2700eb601d352a6
+func (cc *CodecContext) FlushBuffers() {
+	C.avcodec_flush_buffers(cc.c)
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVCodecContext.html#a9b6b3f1fcbdcc2ad9f4dbb4370496e38
 func (cc *CodecContext) GopSize() int {
 	return int(cc.c.gop_size)
