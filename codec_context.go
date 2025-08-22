@@ -293,6 +293,14 @@ func (cc *CodecContext) SetTimeBase(r Rational) {
 	cc.c.time_base = r.c
 }
 
+func (cc *CodecContext) PktTimeBase() Rational {
+	return newRationalFromC(cc.c.pkt_timebase)
+}
+
+func (cc *CodecContext) SetPktTimeBase(r Rational) {
+	cc.c.pkt_timebase = r.c
+}
+
 // https://ffmpeg.org/doxygen/7.0/structAVCodecContext.html#aa852b6227d0778b62e9cc4034ad3720c
 func (cc *CodecContext) ThreadCount() int {
 	return int(cc.c.thread_count)
