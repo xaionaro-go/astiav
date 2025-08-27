@@ -33,6 +33,10 @@ func (c *Codec) ID() CodecID {
 	return CodecID(c.c.id)
 }
 
+func (c *Codec) Capabilities() CodecCapabilities {
+	return CodecCapabilities(c.c.capabilities)
+}
+
 // https://ffmpeg.org/doxygen/7.0/structAVCodec.html#a710e3bd3081124ef3364b0c520379dd8
 func (c *Codec) ChannelLayouts() (o []ChannelLayout) {
 	if c.c.ch_layouts == nil {
