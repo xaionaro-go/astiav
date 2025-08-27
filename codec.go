@@ -33,6 +33,11 @@ func (c *Codec) ID() CodecID {
 	return CodecID(c.c.id)
 }
 
+// https://ffmpeg.org/doxygen/8.0/structAVCodec.html#a710e3bd3081124ef3364b0c520379dd8
+func (c *Codec) Capabilities() CodecCapabilities {
+	return CodecCapabilities(c.c.capabilities)
+}
+
 // https://ffmpeg.org/doxygen/8.0/group__lavc__core.html#ga6dc18eef1afca3610644a52565cf8a31
 func (c *Codec) IsDecoder() bool {
 	return int(C.av_codec_is_decoder(c.c)) != 0
