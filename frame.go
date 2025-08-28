@@ -6,6 +6,7 @@ package astiav
 //#include <libavutil/samplefmt.h>
 //#include <libavutil/hwcontext.h>
 //#include "frame.h"
+//#include "opaque.h"
 import "C"
 import (
 	"unsafe"
@@ -318,4 +319,40 @@ func (f *Frame) MakeWritable() error {
 // https://ffmpeg.org/doxygen/8.0/group__lavu__frame.html#gaec4e92f6e1e75ffaf76e07586fb0c9ed
 func (f *Frame) Copy(dst *Frame) error {
 	return newError(C.av_frame_copy(dst.c, f.c))
+}
+
+func (f *Frame) Duration() int64 {
+	return int64(f.c.duration)
+}
+
+func (f *Frame) SetDuration(v int64) {
+	f.c.duration = C.int64_t(v)
+}
+
+func (f *Frame) SetOpaque(data []byte) (_prev []byte) {
+	if f.c.opaque_ref != nil {
+		_prev = bytesFromC(func(size *C.size_t) *C.uint8_t {
+			*size = f.c.opaque_ref.size
+			return (*C.uint8_t)(f.c.opaque_ref.data)
+		})
+		C.av_buffer_unref(&f.c.opaque_ref)
+		f.c.opaque_ref = nil
+	}
+
+	if data == nil {
+		return
+	}
+	opaque := C.astiav_new_opaque((*C.uint8_t)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	f.c.opaque_ref = opaque
+	return
+}
+
+func (f *Frame) Opaque() []byte {
+	if f.c.opaque_ref == nil {
+		return nil
+	}
+	return bytesFromC(func(size *C.size_t) *C.uint8_t {
+		*size = f.c.opaque_ref.size
+		return (*C.uint8_t)(f.c.opaque_ref.data)
+	})
 }

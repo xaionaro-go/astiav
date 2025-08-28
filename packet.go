@@ -2,6 +2,7 @@ package astiav
 
 //#include <libavcodec/avcodec.h>
 //#include <libavcodec/packet.h>
+//#include "opaque.h"
 import "C"
 import (
 	"errors"
@@ -200,4 +201,32 @@ func (p *Packet) TimeBase() Rational {
 func (p *Packet) SetTimeBase(v Rational) {
 	p.c.time_base.num = v.c.num
 	p.c.time_base.den = v.c.den
+}
+
+func (p *Packet) SetOpaque(data []byte) (_prev []byte) {
+	if p.c.opaque_ref != nil {
+		_prev = bytesFromC(func(size *C.size_t) *C.uint8_t {
+			*size = p.c.opaque_ref.size
+			return (*C.uint8_t)(p.c.opaque_ref.data)
+		})
+		C.av_buffer_unref(&p.c.opaque_ref)
+		p.c.opaque_ref = nil
+	}
+
+	if data == nil {
+		return
+	}
+	opaque := C.astiav_new_opaque((*C.uint8_t)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	p.c.opaque_ref = opaque
+	return
+}
+
+func (p *Packet) Opaque() []byte {
+	if p.c.opaque_ref == nil {
+		return nil
+	}
+	return bytesFromC(func(size *C.size_t) *C.uint8_t {
+		*size = p.c.opaque_ref.size
+		return (*C.uint8_t)(p.c.opaque_ref.data)
+	})
 }
