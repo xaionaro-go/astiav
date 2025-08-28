@@ -6,6 +6,7 @@ package astiav
 //#include <libavutil/samplefmt.h>
 //#include <libavutil/hwcontext.h>
 //#include "frame.h"
+//#include "opaque.h"
 import "C"
 import (
 	"unsafe"
@@ -311,4 +312,32 @@ func (f *Frame) Duration() int64 {
 
 func (f *Frame) SetDuration(v int64) {
 	f.c.duration = C.int64_t(v)
+}
+
+func (f *Frame) SetOpaque(data []byte) (_prev []byte) {
+	if f.c.opaque_ref != nil {
+		_prev = bytesFromC(func(size *C.size_t) *C.uint8_t {
+			*size = f.c.opaque_ref.size
+			return (*C.uint8_t)(f.c.opaque_ref.data)
+		})
+		C.av_buffer_unref(&f.c.opaque_ref)
+		f.c.opaque_ref = nil
+	}
+
+	if data == nil {
+		return
+	}
+	opaque := C.astiav_new_opaque((*C.uint8_t)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	f.c.opaque_ref = opaque
+	return
+}
+
+func (f *Frame) Opaque() []byte {
+	if f.c.opaque_ref == nil {
+		return nil
+	}
+	return bytesFromC(func(size *C.size_t) *C.uint8_t {
+		*size = f.c.opaque_ref.size
+		return (*C.uint8_t)(f.c.opaque_ref.data)
+	})
 }
