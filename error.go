@@ -15,6 +15,7 @@ const (
 	ErrDecoderNotFound  = Error(C.AVERROR_DECODER_NOT_FOUND)
 	ErrDemuxerNotFound  = Error(C.AVERROR_DEMUXER_NOT_FOUND)
 	ErrEagain           = Error(-(C.EAGAIN))
+	ErrEinval           = Error(-(C.EINVAL))
 	ErrEio              = Error(-(C.EIO))
 	ErrEncoderNotFound  = Error(C.AVERROR_ENCODER_NOT_FOUND)
 	ErrEof              = Error(C.AVERROR_EOF)
