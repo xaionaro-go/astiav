@@ -35,12 +35,6 @@ func AllocCodecContext(c *Codec) *CodecContext {
 // https://ffmpeg.org/doxygen/8.0/group__lavc__core.html#gaf869d0829ed607cec3a4a02a1c7026b3
 func (cc *CodecContext) Free() {
 	if cc.c != nil {
-		if cc.c.hw_device_ctx != nil {
-			C.av_buffer_unref(&cc.c.hw_device_ctx)
-		}
-		if cc.c.hw_frames_ctx != nil {
-			C.av_buffer_unref(&cc.c.hw_frames_ctx)
-		}
 		// Make sure to clone the classer before freeing the object since
 		// the C free method may reset the pointer
 		c := newClonedClasser(cc)
