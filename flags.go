@@ -109,6 +109,28 @@ func (fs CodecHardwareConfigMethodFlags) Has(f CodecHardwareConfigMethodFlag) bo
 	return astikit.BitFlags(fs).Has(uint64(f))
 }
 
+type FrameCropFlags astikit.BitFlags
+
+func NewFrameCropFlags(fs ...FrameCropFlag) FrameCropFlags {
+	o := FrameCropFlags(0)
+	for _, f := range fs {
+		o = o.Add(f)
+	}
+	return o
+}
+
+func (fs FrameCropFlags) Add(f FrameCropFlag) FrameCropFlags {
+	return FrameCropFlags(astikit.BitFlags(fs).Add(uint64(f)))
+}
+
+func (fs FrameCropFlags) Del(f FrameCropFlag) FrameCropFlags {
+	return FrameCropFlags(astikit.BitFlags(fs).Del(uint64(f)))
+}
+
+func (fs FrameCropFlags) Has(f FrameCropFlag) bool {
+	return astikit.BitFlags(fs).Has(uint64(f))
+}
+
 type DictionaryFlags astikit.BitFlags
 
 func NewDictionaryFlags(fs ...DictionaryFlag) DictionaryFlags {
