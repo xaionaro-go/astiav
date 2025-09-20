@@ -42,6 +42,11 @@ func (f *Frame) AllocHardwareBuffer(hfc *HardwareFramesContext) error {
 	return newError(C.av_hwframe_get_buffer(hfc.c, f.c, 0))
 }
 
+// https://ffmpeg.org/doxygen/8.0/group__lavu__frame.html#gaea6d378ff15d984d4eb67b462b7d70b5
+func (f *Frame) ApplyCropping(flags FrameCropFlags) error {
+	return newError(C.av_frame_apply_cropping(f.c, C.int(flags)))
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVFrame.html#ae291cdec7758599e765bc9e3edbb3065
 func (f *Frame) ChannelLayout() ChannelLayout {
 	l, _ := newChannelLayoutFromC(&f.c.ch_layout).clone()
