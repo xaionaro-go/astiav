@@ -53,6 +53,16 @@ func (f *Frame) ChannelLayout() ChannelLayout {
 	return l
 }
 
+// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#a49020cc320b8fb1f5449167b6c97515b
+func (f *Frame) Flags() FrameFlags {
+	return FrameFlags(f.c.flags)
+}
+
+// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#a49020cc320b8fb1f5449167b6c97515b
+func (f *Frame) SetFlags(flags FrameFlags) {
+	f.c.flags = C.int(flags)
+}
+
 // https://ffmpeg.org/doxygen/7.0/structAVFrame.html#ae291cdec7758599e765bc9e3edbb3065
 func (f *Frame) SetChannelLayout(l ChannelLayout) {
 	l.copy(&f.c.ch_layout) //nolint: errcheck

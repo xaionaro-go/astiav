@@ -131,6 +131,28 @@ func (fs FrameCropFlags) Has(f FrameCropFlag) bool {
 	return astikit.BitFlags(fs).Has(uint64(f))
 }
 
+type FrameFlags astikit.BitFlags
+
+func NewFrameFlags(fs ...FrameFlag) FrameFlags {
+	o := FrameFlags(0)
+	for _, f := range fs {
+		o = o.Add(f)
+	}
+	return o
+}
+
+func (fs FrameFlags) Add(f FrameFlag) FrameFlags {
+	return FrameFlags(astikit.BitFlags(fs).Add(uint64(f)))
+}
+
+func (fs FrameFlags) Del(f FrameFlag) FrameFlags {
+	return FrameFlags(astikit.BitFlags(fs).Del(uint64(f)))
+}
+
+func (fs FrameFlags) Has(f FrameFlag) bool {
+	return astikit.BitFlags(fs).Has(uint64(f))
+}
+
 type DictionaryFlags astikit.BitFlags
 
 func NewDictionaryFlags(fs ...DictionaryFlag) DictionaryFlags {
