@@ -53,7 +53,6 @@ func (f *Frame) ChannelLayout() ChannelLayout {
 	return l
 }
 
-// https://ffmpeg.org/doxygen/8.0/structAVFrame.html#ae291cdec7758599e765bc9e3edbb3065
 func (f *Frame) SetChannelLayout(l ChannelLayout) {
 	l.copy(&f.c.ch_layout) //nolint: errcheck
 }
