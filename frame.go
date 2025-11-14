@@ -171,6 +171,16 @@ func (f *Frame) NbSamples() int {
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a02f45ab8191aea1660159f1e464237ea
+func (f *Frame) TimeBase() Rational {
+	return newRationalFromC(f.c.time_base)
+}
+
+// https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a02f45ab8191aea1660159f1e464237ea
+func (f *Frame) SetTimeBase(r Rational) {
+	f.c.time_base = r.c
+}
+
+// https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a02f45ab8191aea1660159f1e464237ea
 func (f *Frame) SetNbSamples(n int) {
 	f.c.nb_samples = C.int(n)
 }
@@ -359,4 +369,12 @@ func (f *Frame) Opaque() []byte {
 		*size = f.c.opaque_ref.size
 		return (*C.uint8_t)(f.c.opaque_ref.data)
 	})
+}
+
+func (f *Frame) Quality() int {
+	return int(f.c.quality)
+}
+
+func (f *Frame) SetQuality(q int) {
+	f.c.quality = C.int(q)
 }
