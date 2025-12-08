@@ -50,6 +50,27 @@ func (d *packetSideDataDisplayMatrix) Get() (*DisplayMatrix, bool) {
 	return m, true
 }
 
+// https://ffmpeg.org/doxygen/8.0/group__lavc__packet__side__data.html#gga9a80bfcacc586b483a973272800edb97aab8c149a1e6c67aad340733becec87e1
+func (d *PacketSideData) NewExtraData() *packetSideDataNewExtraData {
+	return newPacketSideDataNewExtraData(d)
+}
+
+type packetSideDataNewExtraData struct {
+	d *PacketSideData
+}
+
+func newPacketSideDataNewExtraData(d *PacketSideData) *packetSideDataNewExtraData {
+	return &packetSideDataNewExtraData{d: d}
+}
+
+func (d *packetSideDataNewExtraData) Get() ([]byte, bool) {
+	b := d.d.getBytes(C.AV_PKT_DATA_NEW_EXTRADATA)
+	if len(b) == 0 {
+		return nil, false
+	}
+	return b, true
+}
+
 // https://ffmpeg.org/doxygen/8.0/group__lavc__packet__side__data.html#gga9a80bfcacc586b483a973272800edb97a2093332d8086d25a04942ede61007f6a
 func (d *PacketSideData) SkipSamples() *packetSideDataSkipSamples {
 	return newPacketSideDataSkipSamples(d)
