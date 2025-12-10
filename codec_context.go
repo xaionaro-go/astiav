@@ -366,6 +366,11 @@ func (cc *CodecContext) Open(c *Codec, d *Dictionary) error {
 	return newError(C.avcodec_open2(cc.c, c.c, dc))
 }
 
+// https://ffmpeg.org/doxygen/8.0/group__lavc__misc.html#ga906dda732e79eac12067c6d7ea19b630
+func (cc *CodecContext) IsOpen() bool {
+	return C.avcodec_is_open(cc.c) != 0
+}
+
 // https://ffmpeg.org/doxygen/8.0/group__lavc__decoding.html#ga5b8eff59cf259747cf0b31563e38ded6
 func (cc *CodecContext) ReceivePacket(p *Packet) error {
 	var pc *C.AVPacket
