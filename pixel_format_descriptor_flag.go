@@ -16,5 +16,5 @@ const (
 	PixelFormatDescriptorFlagAlpha     = PixelFormatDescriptorFlag(C.AV_PIX_FMT_FLAG_ALPHA)
 	PixelFormatDescriptorFlagBayer     = PixelFormatDescriptorFlag(C.AV_PIX_FMT_FLAG_BAYER)
 	PixelFormatDescriptorFlagFloat     = PixelFormatDescriptorFlag(C.AV_PIX_FMT_FLAG_FLOAT)
-	PixelFormatDescriptorFlagXyz       = PixelFormatDescriptorFlag(C.AV_PIX_FMT_FLAG_XYZ)
+	//PixelFormatDescriptorFlagXyz       = PixelFormatDescriptorFlag(C.AV_PIX_FMT_FLAG_XYZ)
 )

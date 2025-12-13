@@ -211,7 +211,9 @@ func (fs ErrorRecognitionFlags) Del(f ErrorRecognitionFlag) ErrorRecognitionFlag
 	return ErrorRecognitionFlags(astikit.BitFlags(fs).Del(uint64(f)))
 }
 
-func (fs ErrorRecognitionFlags) Has(f ErrorRecognitionFlag) bool { return astikit.BitFlags(fs).Has(uint64(f)) }
+func (fs ErrorRecognitionFlags) Has(f ErrorRecognitionFlag) bool {
+	return astikit.BitFlags(fs).Has(uint64(f))
+}
 
 type FilterFlags astikit.BitFlags
 
@@ -417,7 +419,9 @@ func (fs PixelFormatDescriptorFlags) Del(f PixelFormatDescriptorFlag) PixelForma
 	return PixelFormatDescriptorFlags(astikit.BitFlags(fs).Del(uint64(f)))
 }
 
-func (fs PixelFormatDescriptorFlags) Has(f PixelFormatDescriptorFlag) bool { return astikit.BitFlags(fs).Has(uint64(f)) }
+func (fs PixelFormatDescriptorFlags) Has(f PixelFormatDescriptorFlag) bool {
+	return astikit.BitFlags(fs).Has(uint64(f))
+}
 
 type SeekFlags astikit.BitFlags
 

@@ -108,20 +108,6 @@ func (f *Frame) SetHeight(h int) {
 	f.c.height = C.int(h)
 }
 
-// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#afe0345882416bbb9d3a86720dcaa9252
-func (f *Frame) KeyFrame() bool {
-	return int(f.c.key_frame) > 0
-}
-
-// https://ffmpeg.org/doxygen/7.0/structAVFrame.html#afe0345882416bbb9d3a86720dcaa9252
-func (f *Frame) SetKeyFrame(k bool) {
-	i := 0
-	if k {
-		i = 1
-	}
-	f.c.key_frame = C.int(i)
-}
-
 // https://ffmpeg.org/doxygen/7.0/group__lavu__picture.html#ga24a67963c3ae0054a2a4bab35930e694
 func (f *Frame) ImageBufferSize(align int) (int, error) {
 	ret := C.av_image_get_buffer_size((C.enum_AVPixelFormat)(f.c.format), f.c.width, f.c.height, C.int(align))
