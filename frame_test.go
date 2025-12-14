@@ -1,3 +1,5 @@
+//+build ffmpeg7
+
 package astiav
 
 import (

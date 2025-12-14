@@ -46,6 +46,16 @@ var (
 	ChannelLayout7Point1TopBack    = newChannelLayoutFromC(C.astiavChannelLayout7Point1TopBack)
 )
 
+// https://ffmpeg.org/doxygen/8.0/group__lavu__audio__channels.html#ga1c7bfa90b2e7d3e3dc7210831ff2811a
+type ChannelOrder C.enum_AVChannelOrder
+
+const (
+	ChannelOrderUnspecified = ChannelOrder(C.AV_CHANNEL_ORDER_UNSPEC)
+	ChannelOrderNative      = ChannelOrder(C.AV_CHANNEL_ORDER_NATIVE)
+	ChannelOrderCustom      = ChannelOrder(C.AV_CHANNEL_ORDER_CUSTOM)
+	ChannelOrderAmbisonic   = ChannelOrder(C.AV_CHANNEL_ORDER_AMBISONIC)
+)
+
 // https://ffmpeg.org/doxygen/8.0/structAVChannelLayout.html
 type ChannelLayout struct {
 	c *C.AVChannelLayout
@@ -53,6 +63,22 @@ type ChannelLayout struct {
 
 func newChannelLayoutFromC(c *C.AVChannelLayout) ChannelLayout {
 	return ChannelLayout{c: c}
+}
+
+// https://ffmpeg.org/doxygen/8.0/structAVChannelLayout.html#a8c83c2adebebb1a2ef321b16a69cbaba
+func (l ChannelLayout) Order() ChannelOrder {
+	if l.c == nil {
+		return ChannelOrderUnspecified
+	}
+	return ChannelOrder(l.c.order)
+}
+
+// https://ffmpeg.org/doxygen/8.0/structAVChannelLayout.html#a8c83c2adebebb1a2ef321b16a69cbaba
+func (l ChannelLayout) SetOrder(order ChannelOrder) {
+	if l.c == nil {
+		return
+	}
+	l.c.order = C.enum_AVChannelOrder(order)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVChannelLayout.html#adfd3f460a8ea1575baa32852d9248d3c
