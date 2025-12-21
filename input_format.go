@@ -41,3 +41,16 @@ func (f *InputFormat) LongName() string {
 func (f *InputFormat) String() string {
 	return f.Name()
 }
+
+// https://ffmpeg.org/doxygen/trunk/group__lavf__core.html#gaddf8c11818a124e96109ad5eeed0d51b
+func Demuxers() (cs []*InputFormat) {
+	var opq *C.void = nil
+	for {
+		c := C.av_demuxer_iterate((*unsafe.Pointer)(unsafe.Pointer(&opq)))
+		if c == nil {
+			break
+		}
+		cs = append(cs, newInputFormatFromC(c))
+	}
+	return
+}
