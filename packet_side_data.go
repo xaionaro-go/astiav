@@ -129,3 +129,15 @@ func (d *PacketSideData) getBytes(t C.enum_AVPacketSideDataType) []byte {
 		return sd.data
 	})
 }
+
+func (d *PacketSideData) Types() []C.enum_AVPacketSideDataType {
+	if d.sd == nil || d.size == nil {
+		return nil
+	}
+	var types []C.enum_AVPacketSideDataType
+	for i := 0; i < int(*d.size); i++ {
+		sd := (*C.AVPacketSideData)(unsafe.Pointer(uintptr(unsafe.Pointer(*d.sd)) + uintptr(i)*unsafe.Sizeof(C.AVPacketSideData{})))
+		types = append(types, sd._type)
+	}
+	return types
+}
