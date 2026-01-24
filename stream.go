@@ -99,6 +99,10 @@ func (s *Stream) Metadata() *Dictionary {
 	return newDictionaryFromC(s.c.metadata)
 }
 
+func (s *Stream) SideData() *PacketSideData {
+	return newPacketSideDataFromC(&s.c.side_data, &s.c.nb_side_data)
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVStream.html#a50d250a128a3da9ce3d135e84213fb82
 func (s *Stream) SetMetadata(d *Dictionary) {
 	if d == nil {
