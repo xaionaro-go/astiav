@@ -12,7 +12,6 @@ const (
 	CodecContextFlag4Mv           = CodecContextFlag(C.AV_CODEC_FLAG_4MV)
 	CodecContextFlagOutputCorrupt = CodecContextFlag(C.AV_CODEC_FLAG_OUTPUT_CORRUPT)
 	CodecContextFlagQpel          = CodecContextFlag(C.AV_CODEC_FLAG_QPEL)
-	CodecContextFlagDropChanged   = CodecContextFlag(C.AV_CODEC_FLAG_DROPCHANGED)
 	CodecContextFlagReconFrame    = CodecContextFlag(C.AV_CODEC_FLAG_RECON_FRAME)
 	CodecContextFlagCopyOpaque    = CodecContextFlag(C.AV_CODEC_FLAG_COPY_OPAQUE)
 	CodecContextFlagFrameDuration = CodecContextFlag(C.AV_CODEC_FLAG_FRAME_DURATION)
