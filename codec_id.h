@@ -1,0 +1,22 @@
+#ifndef ASTIAV_CODEC_ID_H
+#define ASTIAV_CODEC_ID_H
+
+#include <libavcodec/avcodec.h>
+
+#ifndef AV_CODEC_ID_IVTV_VBI
+#define AV_CODEC_ID_IVTV_VBI AV_CODEC_ID_NONE
+#endif
+
+#ifndef AV_CODEC_ID_JPEGXL_ANIM
+#define AV_CODEC_ID_JPEGXL_ANIM AV_CODEC_ID_NONE
+#endif
+
+#ifndef AV_CODEC_ID_PRORES_RAW
+#define AV_CODEC_ID_PRORES_RAW AV_CODEC_ID_NONE
+#endif
+
+#ifndef AV_CODEC_ID_SMPTE_436M_ANC
+#define AV_CODEC_ID_SMPTE_436M_ANC AV_CODEC_ID_NONE
+#endif
+
+#endif

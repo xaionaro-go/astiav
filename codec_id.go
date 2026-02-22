@@ -1,7 +1,6 @@
 package astiav
 
-//#include <libavcodec/avcodec.h>
-//#include <libavformat/avformat.h>
+//#include "codec_id.h"
 import "C"
 
 // https://ffmpeg.org/doxygen/8.0/group__lavc__core.html#gaadca229ad2c20e060a14fec08a5cc7ce
@@ -247,12 +246,12 @@ const (
 	CodecIDInterplayDpcm            = CodecID(C.AV_CODEC_ID_INTERPLAY_DPCM)
 	CodecIDInterplayVideo           = CodecID(C.AV_CODEC_ID_INTERPLAY_VIDEO)
 	CodecIDIpu                      = CodecID(C.AV_CODEC_ID_IPU)
-	CodecIDIvtvVbi                  = CodecID(C.AV_CODEC_ID_IVTV_VBI)
+	CodecIDIvtvVbi                  = CodecID(C.AV_CODEC_ID_NONE)
 	CodecIDJacosub                  = CodecID(C.AV_CODEC_ID_JACOSUB)
 	CodecIDJpeg2000                 = CodecID(C.AV_CODEC_ID_JPEG2000)
 	CodecIDJpegls                   = CodecID(C.AV_CODEC_ID_JPEGLS)
 	CodecIDJpegxl                   = CodecID(C.AV_CODEC_ID_JPEGXL)
-	CodecIDJpegxlAnim               = CodecID(C.AV_CODEC_ID_JPEGXL_ANIM)
+	CodecIDJpegxlAnim               = CodecID(C.AV_CODEC_ID_NONE)
 	CodecIDJv                       = CodecID(C.AV_CODEC_ID_JV)
 	CodecIDKgv1                     = CodecID(C.AV_CODEC_ID_KGV1)
 	CodecIDKmvc                     = CodecID(C.AV_CODEC_ID_KMVC)
@@ -386,7 +385,7 @@ const (
 	CodecIDPpm                      = CodecID(C.AV_CODEC_ID_PPM)
 	CodecIDProbe                    = CodecID(C.AV_CODEC_ID_PROBE)
 	CodecIDProres                   = CodecID(C.AV_CODEC_ID_PRORES)
-	CodecIDProresRaw                = CodecID(C.AV_CODEC_ID_PRORES_RAW)
+	CodecIDProresRaw                = CodecID(C.AV_CODEC_ID_NONE)
 	CodecIDProsumer                 = CodecID(C.AV_CODEC_ID_PROSUMER)
 	CodecIDPsd                      = CodecID(C.AV_CODEC_ID_PSD)
 	CodecIDPtx                      = CodecID(C.AV_CODEC_ID_PTX)
@@ -440,7 +439,7 @@ const (
 	CodecIDSmackvideo               = CodecID(C.AV_CODEC_ID_SMACKVIDEO)
 	CodecIDSmc                      = CodecID(C.AV_CODEC_ID_SMC)
 	CodecIDSmpte2038                = CodecID(C.AV_CODEC_ID_SMPTE_2038)
-	CodecIDSmpte436mAnc             = CodecID(C.AV_CODEC_ID_SMPTE_436M_ANC)
+	CodecIDSmpte436mAnc             = CodecID(C.AV_CODEC_ID_NONE)
 	CodecIDSmpteKlv                 = CodecID(C.AV_CODEC_ID_SMPTE_KLV)
 	CodecIDSmv                      = CodecID(C.AV_CODEC_ID_SMV)
 	CodecIDSmvjpeg                  = CodecID(C.AV_CODEC_ID_SMVJPEG)

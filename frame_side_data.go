@@ -28,6 +28,9 @@ func (d *FrameSideData) RegionsOfInterest() *frameSideDataRegionsOfInterest {
 	return newFrameSideDataRegionsOfInterest(d)
 }
 
+// DisplayMatrix from frame side data is not used in avpipeline; rotation metadata
+// is sourced from codec parameters side data in FFmpeg 8+.
+
 type frameSideDataRegionsOfInterest struct {
 	d *FrameSideData
 }

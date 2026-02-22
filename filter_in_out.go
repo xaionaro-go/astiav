@@ -28,6 +28,9 @@ func (i *FilterInOut) Free() {
 	}
 }
 
+// Detach releases ownership of the underlying C pointer without freeing it.
+// Use this when ownership is transferred to libavfilter (e.g. avfilter_graph_parse_ptr).
+
 // https://ffmpeg.org/doxygen/8.0/structAVFilterInOut.html#a88afecac258f51aab7e9a9db9e7a4d58
 func (i *FilterInOut) SetName(n string) {
 	cn := C.CString(n)
