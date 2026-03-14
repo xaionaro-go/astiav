@@ -6,7 +6,7 @@ void astiavLogCallback(void *ptr, int level, const char *fmt, va_list vl)
 {
 	if (level > av_log_get_level()) return;
 	char msg[1024];
-	vsprintf(msg, fmt, vl);
+	vsnprintf(msg, sizeof(msg), fmt, vl);
 	goAstiavLogCallback(ptr, level, (char*)(fmt), msg);
 }
 
