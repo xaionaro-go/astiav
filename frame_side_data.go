@@ -28,6 +28,11 @@ func (d *FrameSideData) RegionsOfInterest() *frameSideDataRegionsOfInterest {
 	return newFrameSideDataRegionsOfInterest(d)
 }
 
+// https://ffmpeg.org/doxygen/8.0/group__lavu__frame.html#ggae01fa7e427274293aacdf2adc17076bca2afd8d499e7a4328e07670ebd6595f72
+func (d *FrameSideData) MotionVectors() *frameSideDataMotionVectors {
+	return newFrameSideDataMotionVectors(d)
+}
+
 // DisplayMatrix from frame side data is not used in avpipeline; rotation metadata
 // is sourced from codec parameters side data in FFmpeg 8+.
 
