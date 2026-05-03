@@ -29,8 +29,17 @@ func (hfc *HardwareFramesContext) Free() {
 	}
 }
 
+// data returns the underlying AVHWFramesContext, or nil if the buffer
+// reference has not been allocated (e.g. zero-value receiver) or its
+// data pointer is unset (allocator failed, refcount dropped to zero,
+// etc.). Callers that read fields must nil-check the result; setters
+// rely on this returning non-nil when the receiver was constructed via
+// AllocHardwareFramesContext.
 func (hfc *HardwareFramesContext) data() *C.AVHWFramesContext {
-	return (*C.AVHWFramesContext)(unsafe.Pointer((hfc.c.data)))
+	if hfc == nil || hfc.c == nil || hfc.c.data == nil {
+		return nil
+	}
+	return (*C.AVHWFramesContext)(unsafe.Pointer(hfc.c.data))
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVHWFramesContext.html#a9e6f29d0f744930cdd0e8bdff8771520
@@ -48,9 +57,38 @@ func (hfc *HardwareFramesContext) SetHardwarePixelFormat(format PixelFormat) {
 	hfc.data().format = C.enum_AVPixelFormat(format)
 }
 
+// HardwarePixelFormat returns the configured hardware pixel format
+// (e.g. AV_PIX_FMT_MEDIACODEC, AV_PIX_FMT_CUDA). Returns PixelFormatNone
+// when called before AllocHardwareFramesContext (or with a zero-value
+// receiver) so misordered code surfaces a benign sentinel rather than
+// a SIGSEGV in C.
+//
+// https://ffmpeg.org/doxygen/8.0/structAVHWFramesContext.html#a045bc1713932804f6ceef170a5578e0e
+func (hfc *HardwareFramesContext) HardwarePixelFormat() PixelFormat {
+	d := hfc.data()
+	if d == nil {
+		return PixelFormatNone
+	}
+	return PixelFormat(d.format)
+}
+
 // https://ffmpeg.org/doxygen/8.0/structAVHWFramesContext.html#a663a9aceca97aa7b2426c9aba6543e4a
 func (hfc *HardwareFramesContext) SetSoftwarePixelFormat(swFormat PixelFormat) {
 	hfc.data().sw_format = C.enum_AVPixelFormat(swFormat)
+}
+
+// SoftwarePixelFormat returns the configured software pixel format used
+// for SW<->HW transfers (e.g. AV_PIX_FMT_NV12 for mediacodec/cuda).
+// Returns PixelFormatNone when called before AllocHardwareFramesContext
+// (or with a zero-value receiver); see HardwarePixelFormat.
+//
+// https://ffmpeg.org/doxygen/8.0/structAVHWFramesContext.html#a663a9aceca97aa7b2426c9aba6543e4a
+func (hfc *HardwareFramesContext) SoftwarePixelFormat() PixelFormat {
+	d := hfc.data()
+	if d == nil {
+		return PixelFormatNone
+	}
+	return PixelFormat(d.sw_format)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVHWFramesContext.html#a9c3a94dcd9c96e19059b56a6bae9c764

@@ -417,14 +417,11 @@ func (cc *CodecContext) FromCodecParameters(cp *CodecParameters) error {
 
 // https://ffmpeg.org/doxygen/8.0/structAVCodecContext.html#acf8113e490f9e7b57465e65af9c0c75c
 func (cc *CodecContext) SetHardwareDeviceContext(hdc *HardwareDeviceContext) {
-	if cc.c.hw_device_ctx != nil {
-		C.av_buffer_unref(&cc.c.hw_device_ctx)
-	}
+	var src *C.AVBufferRef
 	if hdc != nil {
-		cc.c.hw_device_ctx = C.av_buffer_ref(hdc.c)
-	} else {
-		cc.c.hw_device_ctx = nil
+		src = hdc.c
 	}
+	setBufferRef(&cc.c.hw_device_ctx, src)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVCodecContext.html#a3bac44bb0b016ab838780cc19ac277d6
@@ -434,14 +431,11 @@ func (cc *CodecContext) HardwareFramesContext() *HardwareFramesContext {
 
 // https://ffmpeg.org/doxygen/8.0/structAVCodecContext.html#a3bac44bb0b016ab838780cc19ac277d6
 func (cc *CodecContext) SetHardwareFramesContext(hfc *HardwareFramesContext) {
-	if cc.c.hw_frames_ctx != nil {
-		C.av_buffer_unref(&cc.c.hw_frames_ctx)
-	}
+	var src *C.AVBufferRef
 	if hfc != nil {
-		cc.c.hw_frames_ctx = C.av_buffer_ref(hfc.c)
-	} else {
-		cc.c.hw_frames_ctx = nil
+		src = (*C.AVBufferRef)(hfc.c)
 	}
+	setBufferRef((**C.AVBufferRef)(&cc.c.hw_frames_ctx), src)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVCodecContext.html#ad2f772bd948d8f3be4d674a3a52ee00e

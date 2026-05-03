@@ -29,26 +29,45 @@ func newClassFromC(ptr unsafe.Pointer) *Class {
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVClass.html#a5fc161d93a0d65a608819da20b7203ba
+//
+// Returns ClassCategoryNa for a Class with a nil receiver or nil
+// AVClass pointer — defense in depth against malformed Class objects
+// reaching user code (e.g. via stale pointers in log callbacks).
 func (c *Class) Category() ClassCategory {
+	if c == nil || c.c == nil {
+		return ClassCategoryNa
+	}
 	return ClassCategory(C.astiavClassCategory(c.c, c.ptr))
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVClass.html#ad763b2e6a0846234a165e74574a550bd
 func (c *Class) ItemName() string {
+	if c == nil || c.c == nil {
+		return ""
+	}
 	return C.GoString(C.astiavClassItemName(c.c, c.ptr))
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVClass.html#aa8883e113a3f2965abd008f7667db7eb
 func (c *Class) Name() string {
+	if c == nil || c.c == nil {
+		return ""
+	}
 	return C.GoString(c.c.class_name)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVClass.html#a88948c8a7c6515181771615a54a808bf
 func (c *Class) Parent() *Class {
+	if c == nil || c.c == nil {
+		return nil
+	}
 	return newClassFromC(unsafe.Pointer(C.astiavClassParent(c.c, c.ptr)))
 }
 
 func (c *Class) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	return fmt.Sprintf("%s [%s] @ %p", c.ItemName(), c.Name(), c.ptr)
 }
 
@@ -59,11 +78,43 @@ type Classer interface {
 var _ Classer = (*UnknownClasser)(nil)
 
 type UnknownClasser struct {
-	c *Class
+	c   *Class
+	ptr unsafe.Pointer
 }
 
+// PointerString returns a hex-formatted address of the originating
+// FFmpeg context for diagnostic log lines (e.g. "0xc000123456"). It
+// returns "<nil>" for a nil receiver or when no pointer is associated.
+//
+// The raw pointer itself is intentionally not exposed: the underlying
+// memory may already be freed (the entire reason this classer is
+// "unknown" — see newUnknownClasser), so dereferencing it is a UAF.
+// Returning a string instead of unsafe.Pointer makes that misuse
+// impossible at the API boundary.
+func (c *UnknownClasser) PointerString() string {
+	if c == nil || c.ptr == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("%p", c.ptr)
+}
+
+// newUnknownClasser returns an UnknownClasser identified by ptr.
+//
+// It deliberately does NOT dereference ptr. FFmpeg may emit log
+// callbacks with a ptr to a context that has already been freed by a
+// background thread (e.g. android_camera HAL callbacks racing
+// avformat_close_input). Reading *(**AVClass)(ptr) on freed memory
+// is a use-after-read that yields a garbage *AVClass — any later
+// call to a Class method would dereference that garbage and crash
+// (observed signature: SIGSEGV inside astiavClassCategory).
+//
+// Callers that need to format Class info must obtain it via the
+// classers pool while the object is registered. An UnknownClasser
+// returned here has Class() == nil to signal "no usable class info";
+// existing user code (e.g. logrus formatter) already treats nil
+// Class as a no-op.
 func newUnknownClasser(ptr unsafe.Pointer) *UnknownClasser {
-	return &UnknownClasser{c: newClassFromC(ptr)}
+	return &UnknownClasser{ptr: ptr}
 }
 
 func (c *UnknownClasser) Class() *Class {

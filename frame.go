@@ -84,7 +84,32 @@ func (f *Frame) Data() *FrameData {
 
 // https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a29493fbfabaa21432c360a090426aa8e
 func (f *Frame) HardwareFramesContext() *HardwareFramesContext {
+	if f == nil || f.c == nil {
+		return nil
+	}
 	return newHardwareFramesContextFromC(f.c.hw_frames_ctx)
+}
+
+// SetHardwareFramesContext attaches a hw_frames_ctx to the frame. Required
+// for av_hwframe_transfer_data on a HW-pixfmt frame whose decoder did not
+// stamp hw_frames_ctx itself (mediacodec on Android exhibits this — frames
+// carry pix_fmt=mediacodec but f->hw_frames_ctx is unset; the caller must
+// borrow the hw_frames_ctx from the upstream decoder/codec context). Passing
+// nil unrefs any existing context.
+//
+// Self-assignment (e.g. f.SetHardwareFramesContext(f.HardwareFramesContext()))
+// is safe — see setBufferRef.
+//
+// https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a29493fbfabaa21432c360a090426aa8e
+func (f *Frame) SetHardwareFramesContext(hfc *HardwareFramesContext) {
+	if f == nil || f.c == nil {
+		return
+	}
+	var src *C.AVBufferRef
+	if hfc != nil {
+		src = (*C.AVBufferRef)(hfc.c)
+	}
+	setBufferRef((**C.AVBufferRef)(&f.c.hw_frames_ctx), src)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVFrame.html#a3f89733f429c98ba5bc64373fb0a3f13

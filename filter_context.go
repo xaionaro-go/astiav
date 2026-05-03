@@ -48,14 +48,11 @@ func (fc *FilterContext) Class() *Class {
 
 // https://ffmpeg.org/doxygen/8.0/structAVFilterContext.html#addd946fbe5af506a2b19f9ad7cb97c35
 func (fc *FilterContext) SetHardwareDeviceContext(hdc *HardwareDeviceContext) {
-	if fc.c.hw_device_ctx != nil {
-		C.av_buffer_unref(&fc.c.hw_device_ctx)
-	}
+	var src *C.AVBufferRef
 	if hdc != nil {
-		fc.c.hw_device_ctx = C.av_buffer_ref(hdc.c)
-	} else {
-		fc.c.hw_device_ctx = nil
+		src = hdc.c
 	}
+	setBufferRef(&fc.c.hw_device_ctx, src)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVFilterContext.html#a6eee53e57dddfa7cca1cade870c8a44e

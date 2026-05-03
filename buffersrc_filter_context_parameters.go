@@ -73,14 +73,11 @@ func (bfcp *BuffersrcFilterContextParameters) SetFramerate(f Rational) {
 
 // https://ffmpeg.org/doxygen/8.0/structAVBufferSrcParameters.html#a86c49b4202433037c9e2b0b6ae541534
 func (bfcp *BuffersrcFilterContextParameters) SetHardwareFramesContext(hfc *HardwareFramesContext) {
-	if bfcp.c.hw_frames_ctx != nil {
-		C.av_buffer_unref(&bfcp.c.hw_frames_ctx)
-	}
+	var src *C.AVBufferRef
 	if hfc != nil {
-		bfcp.c.hw_frames_ctx = C.av_buffer_ref(hfc.c)
-	} else {
-		bfcp.c.hw_frames_ctx = nil
+		src = (*C.AVBufferRef)(hfc.c)
 	}
+	setBufferRef((**C.AVBufferRef)(&bfcp.c.hw_frames_ctx), src)
 }
 
 // https://ffmpeg.org/doxygen/8.0/structAVBufferSrcParameters.html#a89783d603b84908fb1998bbbea981b70
